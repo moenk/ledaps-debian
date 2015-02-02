@@ -1,4 +1,13 @@
 #!/bin/bash
+
+#
+#       file: build-libs.sh
+#
+#       purpose: install libs from debian wheery and download and build special libs for ledaps compile
+#
+#       coder: moenkemt@geo.hu-berlin.de
+#
+
 apt-get install ksh gcc wget automake gfortran make subversion bison flex
 apt-get install python python-numpy python-scipy
 apt-get install libtiff5-dev libgeotiff-dev libopenjpeg-dev libxml2-dev libhdf5-dev libcurl4-gnutls-dev

@@ -1,6 +1,14 @@
 #!/bin/bash
 
-# where our libs are?
+#
+#       file: compile-ledaps.sh
+#
+#       purpose: checkout ledaps and cfmak source from google code and compile, then install the aux data 
+#
+#       coder: moenkemt@geo.hu-berlin.de
+#
+
+# where are our libs?
 export HDFEOS_GCTPINC="/opt/hdfeos/gctp/include/"
 export HDFEOS_GCTPLIB="/opt/hdfeos/gctp/src/.libs/"
 export TIFFINC="/usr/include/"

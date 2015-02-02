@@ -1,17 +1,16 @@
 #!/bin/bash
 
+#
+#	file: ledaps-machine.sh
+#
+#	purpose: do batch processing for landsat scenes on san drive
+#
+#	coder: moenkemt@geo.hu-berlin.de
+#
+
 function do_fmask() {
-#	/opt/fmask/run_Fmask.sh /usr/local/MATLAB/MATLAB_Compiler_Runtime/v81 3 3 3 1
-#	mv $1_MTLFmask fmask.$1.c3s3p10.bsq
-#	mv $1_MTLFmask.hdr fmask.$1.c3s3p10.hdr
-	for toarefl in $(ls lndcal.*.hdf); do
-		cfmask  --toarefl=$toarefl --prob=1.0 --cldpix=3 --sdpix=3 --write_binary --no_hdf_out
-	done
-	for fmaskout in $(ls fmask.*.img.hdr); do
-		fmaskbase=`basename $fmaskout .img.hdr`
-		mv $fmaskbase.img $fmaskbase.c3s3p10.bsq
-		mv $fmaskbase.img.hdr $fmaskbase.c3s3p10.hdr
-	done
+	export ESUN='/opt/cfmask/src/'
+	cfmask --xml=$1.xml --prob=1.0 --cldpix=3 --sdpix=3
 }
 
 function do_ldcm() {
@@ -51,20 +50,17 @@ function do_ldcm() {
 }
 
 function do_ledaps() {
-	export ANC_PATH='/opt/ledaps/LedapsAnc'
-	export ESUN='/opt/cfmask/src/'
-	export LEDAPS_BIN='/usr/bin'
+	export LEDAPS_AUX_DIR="/opt/ledaps/ledapsAnc"
 	meta_file=$1
-	echo "Processing metafile $meta_file..."
-	meta=`echo $meta_file | sed -e 's/.txt//' -e 's/_MTL//' -e 's/.met//'`
+	mtl_ext="_MTL.txt"
+	echo "Processing scene $meta_file..."
 	touch .lock
-	echo "Metadata file is: "$meta_file
-	lndpm $meta_file
-	lndcal lndcal.$meta.txt
-#	lndcsm lndcsm.$meta.txt
-	lndsr lndsr.$meta.txt
-	lndsrbm.ksh lndsr.$meta.txt
-	do_fmask $2
+	convert_lpgs_to_espa --mtl $meta_file$mtl_ext --xml $meta_file.xml
+	lndpm $meta_file.xml
+	lndcal lndcal.$meta_file.txt
+	lndsr lndsr.$meta_file.txt
+	lndsrbm.ksh lndsr.$meta_file.txt
+	do_fmask $meta_file
 	rm .lock README.GTF LogReport
 }
 
@@ -85,9 +81,7 @@ function do_all_archives() {
 			tar -xof ../$landsat
 			cd ..
 		fi
-		mtlext="_MTL.txt"
 		cd $landsatdir
-		mtlfile=$landsatdir$mtlext;
 		# start ledaps if not locked
 		ls_prefix=`echo $landsatdir | cut -c 1-3`
 		if [ ! -f .lock ]; then
@@ -96,7 +90,7 @@ function do_all_archives() {
         			LC8) do_ldcm /home/ledaps/ $landsatdir &
         			;;
         			# old Landsat with ledaps
-                                *) do_ledaps $mtlfile $landsatdir &
+                                *) do_ledaps $landsatdir &
                                 ;;
                         esac
 		fi
@@ -146,10 +140,10 @@ function store_files() {
 # input dir: /san/incoming
 # output dir: /san/outgoing
 
-get_some_files 1
-do_all_archives
-store_files
-exit
+#get_some_files 1
+#do_all_archives
+#store_files
+#exit
 
 for ((i=1; i<=64738; i++)); do
 	store_files
