@@ -9,6 +9,7 @@
 #
 
 # where are our libs?
+export PREFIX="/opt/ledaps"
 export HDFEOS_GCTPINC="/opt/hdfeos/gctp/include/"
 export HDFEOS_GCTPLIB="/opt/hdfeos/gctp/src/.libs/"
 export TIFFINC="/usr/include/"
@@ -57,8 +58,10 @@ mkdir /opt/ledaps/ledapsAncSrc/
 cd /opt/ledaps/ledapsAncSrc/
 wget http://espa.cr.usgs.gov/validations/ledaps_auxiliary/ledaps_aux.1978-2014.tar.gz
 tar -xvzf ledaps_aux.1978-2014.tar.gz
+rm CHDEM.hdf
 wget https://ledaps.googlecode.com/files/CMGDEM.hdf.gz
 gunzip CMGDEM.hdf.gz
 ./updatetoms.py --quarterly
 ./updatencep.py --quarterly
 
+# and done.

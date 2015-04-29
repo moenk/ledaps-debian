@@ -11,9 +11,11 @@
 apt-get install ksh gcc wget automake gfortran make subversion bison flex
 apt-get install python python-numpy python-scipy
 apt-get install libtiff5-dev libgeotiff-dev libopenjpeg-dev libxml2-dev libhdf5-dev libcurl4-gnutls-dev
+mkdir /opt
 
+# get and compile hdf4 suitable for hdfeos, not latest version, fix header filename
 cd /opt
-wget http://www.hdfgroup.org/ftp/HDF/HDF_Current/src/hdf-4.2.10.tar.gz
+wget ftp://edhs1.gsfc.nasa.gov/edhs/hdfeos/latest_release/hdf-4.2.10.tar.gz
 tar -xvzf hdf-4.2.10.tar.gz
 rm hdf-4.2.10.tar.gz
 cd hdf-4.2.10
@@ -24,6 +26,7 @@ make install
 cd /opt/hdf-4.2.10/hdf4/include/
 cp netcdf.h hdf4_netcdf.h
 
+# get and compile hdfeos
 cd /opt
 wget ftp://edhs1.gsfc.nasa.gov/edhs/hdfeos/latest_release/HDF-EOS2.19v1.00.tar.Z
 tar -xvzf HDF-EOS2.19v1.00.tar.Z
@@ -34,6 +37,7 @@ export CC=/opt/hdf-4.2.10/hdf4/bin/h4cc
 make
 make install
 
+# get and compile this netcdf, not the hdf4 bundled version
 cd /opt
 wget ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.3.2.tar.gz
 tar -xvzf netcdf-4.3.2.tar.gz
@@ -44,6 +48,7 @@ unset CC
 make
 make install
 
+# get and compile espa tools
 cd /opt
 svn checkout http://espa-common.googlecode.com/svn/releases/version_1.3.1 espa-common
 cd espa-common
@@ -66,3 +71,5 @@ export ESPALIB="/opt/espa-common/src/raw_binary/lib/"
 export BIN="/usr/bin/"
 make
 make install
+
+# and done.
